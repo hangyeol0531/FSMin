@@ -10,17 +10,30 @@
 
     <form action="/save_Image" method='post' enctype="multipart/form-data">
       <div class="submit">
-        <label onclick="" accept="image/git,image/jpeg,image/png">찾아보기
-        <input type='file' name='userfile' accept="image/git,image/jpeg,image/png">
-        </label>
+        <label for="userfile" accept="image/git,image/jpeg,image/png">찾아보기</label>
+        <input id="userfile" type='file' name='userfile' accept="image/git,image/jpeg,image/png">
+        <input class="upload-name" value="파일 선택" disabled="disabled">
       </div>
       <input type='submit'>
     </form>
 
     <div class="images">
-      <div>
-        <img src="/public/userimage/16049743321063217_0428_table_ex1.png" alt="">
-      </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(){ 
+        var fileTarget = $('.submit #userfile'); 
+        fileTarget.on('change', function(){
+          if(window.FileReader){
+            var filename = $(this)[0].files[0].name; 
+          } 
+          else {
+            var filename = $(this).val().split('/').pop().split('\\').pop();
+          } 
+          $(this).siblings('.upload-name').val(filename); 
+        }); 
+      });
+    </script>
   </body>
 </html>
