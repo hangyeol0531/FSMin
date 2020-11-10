@@ -19,8 +19,9 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/save_Image', upload.single('user_images', (req,res) =>{
+router.post('/save_Image', upload.single('userfile'), (req,res)=>{
   console.log('save Image 접속')
-}))
+  res.render('get_file')
+})
 
 module.exports = router;
