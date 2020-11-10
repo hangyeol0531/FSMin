@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' type="text/css"/>
-  </head>
-  <body>
+
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' type="text/css" />
+</head>
+
+<body>
+  <div class="warp">
     <h1 class="title"><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <hr>
 
     <form action="/save_Image" method='post' enctype="multipart/form-data">
       <div class="submit">
@@ -17,23 +21,33 @@
       <input type='submit'>
     </form>
 
+    <span><%= file_num %></span>
+
+
+    <!-- images -->
     <div class="images">
+      <img src="" alt="">
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function(){ 
-        var fileTarget = $('.submit #userfile'); 
-        fileTarget.on('change', function(){
-          if(window.FileReader){
-            var filename = $(this)[0].files[0].name; 
-          } 
-          else {
-            var filename = $(this).val().split('/').pop().split('\\').pop();
-          } 
-          $(this).siblings('.upload-name').val(filename); 
-        }); 
+  </div>
+  <!-- contents -->
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var fileTarget = $('.submit #userfile');
+      fileTarget.on('change', function () {
+        if (window.FileReader) {
+          var filename = $(this)[0].files[0].name;
+        }
+        else {
+          var filename = $(this).val().split('/').pop().split('\\').pop();
+        }
+        $(this).siblings('.upload-name').val(filename);
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

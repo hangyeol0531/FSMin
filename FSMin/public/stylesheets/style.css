@@ -1,10 +1,16 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 a {
   color: #00B7FF;
+}
+
+.warp{
+  padding: 10%;
 }
 /*  */
 
@@ -26,6 +32,10 @@ p{
 
 
 /* form */
+form{
+  float: right;
+  clear: both;
+}
 
 .submit{
   display: inline-block;
@@ -72,6 +82,13 @@ input[type=submit] {
   padding: .5em .75em;
   border-radius: 50px;
 }
+
+/* file-num */
+.file_num{
+  
+}
+
+
 
 
 /* image */
