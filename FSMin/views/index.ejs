@@ -2,14 +2,17 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' type="text/css"/>
   </head>
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
 
     <form action="/save_Image" method='post' enctype="multipart/form-data">
-      <input type='file' name='userfile' accept="image/git,image/jpeg,image/png">
+      <div class="submit">
+        <label>찾아보기</label>
+        <input type='file' name='userfile' accept="image/git,image/jpeg,image/png">
+      </div>
       <input type='submit'>
     </form>
   </body>
