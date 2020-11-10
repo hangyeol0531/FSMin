@@ -6,13 +6,26 @@ body {
 a {
   color: #00B7FF;
 }
+/*  */
 
-input[type=submit] {
-  border: none;
-  border-radius: 50px;
-  padding: .5em .75em;
-  font-size: inherit;
+
+/* title */
+.title{
+  display: inline-block;
+  font-size: 8rem;
+  margin: 1rem 0;
 }
+
+p{
+  display: inline-block;
+  font-size: 2rem;
+  color: #444;
+}
+
+
+
+
+/* form */
 
 .submit{
   display: inline-block;
@@ -44,4 +57,22 @@ input[type=submit] {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+input[type=submit] {
+  border: none;
+  border-radius: 50px;
+  padding: .5em .75em;
+  font-size: inherit;
+}
+
+
+/* image */
+
+.images{
+
+}
+
+.images img{
+  width: 3rem;
 }

@@ -16,7 +16,7 @@ const upload = multer({
 
 router.get('/', function(req, res, next) {
   console.log('/ 접속')
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'FSM in' });
 });
 
 router.post('/save_Image', upload.single('userfile'), (req,res)=>{

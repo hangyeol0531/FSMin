@@ -5,15 +5,22 @@
     <link rel='stylesheet' href='/stylesheets/style.css' type="text/css"/>
   </head>
   <body>
-    <h1><%= title %></h1>
+    <h1 class="title"><%= title %></h1>
     <p>Welcome to <%= title %></p>
 
     <form action="/save_Image" method='post' enctype="multipart/form-data">
       <div class="submit">
-        <label>찾아보기</label>
+        <label onclick="" accept="image/git,image/jpeg,image/png">찾아보기
         <input type='file' name='userfile' accept="image/git,image/jpeg,image/png">
+        </label>
       </div>
       <input type='submit'>
     </form>
+
+    <div class="images">
+      <div>
+        <img src="/public/userimage/16049743321063217_0428_table_ex1.png" alt="">
+      </div>
+    </div>
   </body>
 </html>
