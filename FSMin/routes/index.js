@@ -19,6 +19,7 @@ router.get('/', function(req, res, next) {
   console.log('/ 접속')
   fs.readdir('./public/userimage', (err, file_list) =>{
     console.log(file_list.length)
+    console.log(file_list)
     res.render('index', { title: 'FSM in',
       file_num : file_list.length,
       file_arr : file_list
