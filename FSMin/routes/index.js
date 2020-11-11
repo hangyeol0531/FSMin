@@ -1,13 +1,15 @@
-var express = require('express');
-var multer = require('multer')
-var router = express.Router();
-var fs = require('fs')
+const express = require('express');
+const multer = require('multer')
+const router = express.Router();
+// const { sequelize } = require('./models/index.js');
+const fs = require('fs')
+const img_file_path = './public/userimage'
 
 /* GET home page. */
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'public/userimage/');
+      cb(null, img_file_path);
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf()+file.originalname);
@@ -17,7 +19,7 @@ const upload = multer({
 
 router.get('/', function(req, res, next) {
   console.log('/ 접속')
-  fs.readdir('./public/userimage', (err, file_list) =>{
+  fs.readdir(img_file_path, (err, file_list) =>{
     // console.log(file_list.length)
     // console.log(file_list)
     res.render('index', { title: 'FSM in',
