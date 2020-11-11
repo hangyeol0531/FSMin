@@ -18,8 +18,8 @@ const upload = multer({
 router.get('/', function(req, res, next) {
   console.log('/ 접속')
   fs.readdir('./public/userimage', (err, file_list) =>{
-    console.log(file_list.length)
-    console.log(file_list)
+    // console.log(file_list.length)
+    // console.log(file_list)
     res.render('index', { title: 'FSM in',
       file_num : file_list.length,
       file_arr : file_list
@@ -29,7 +29,8 @@ router.get('/', function(req, res, next) {
 
 router.post('/save_Image', upload.single('userfile'), (req,res)=>{
   console.log('save Image 접속')
-  res.render('get_file')
+  console.log('파일 전송 완료')
+  res.status(401).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
 
 
