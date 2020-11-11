@@ -5,13 +5,16 @@ const MPI = require('../MPI/file.js');
 
 const PORT = 4737;
 
-const clientList = new Set();
+const nodeList = [];
 
 const server = net.createServer((conn) => {
-    clientList.add(conn)
+    nodeList.push(conn);
+    console.log(nodeList[0].remoteAddress);
+    
+    //console.log(conn.remoteAddress);
 
-    console.log(`Slave connected. IP : ${conn.remoteAddress}`);
-    MPI.sendFile(conn, path.join(__dirname,`test.txt`), 0x4000);
+    //console.log(`Node connected. IP : ${conn.remoteAddress}`);
+    //MPI.sendFile(conn, path.join(__dirname,`test.txt`), 0x4000);
     /*
     const readStream = fs.createReadStream(path.join(__dirname,`test.txt`), {highWaterMark: 0x5000});
 
@@ -34,6 +37,9 @@ const server = net.createServer((conn) => {
         console.log("total bytes sent", totalBytes);
     });*/
 });
+
+
+
 server.on('error',(err)=>{
     console.log('Error occurred');
     throw err;
