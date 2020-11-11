@@ -1,7 +1,6 @@
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
-const os = require( 'os' );
 
 const masterIP = ['192.168.0.55','192.168.137.200'];
 const masterPORT = 4737;
@@ -14,40 +13,44 @@ const client = net.createConnection(masterPORT,masterIP[0],()=>{
 let packets = 0;
 let buffer = Buffer.alloc(0);
 client.on('data', (chunk)=>{
-  packets++;
-  //console.log(chunk);
-  buffer = Buffer.concat([buffer, chunk]);
+    if(chunk != 'END'){
+        packets++;
+        console.log(chunk);
+        buffer = Buffer.concat([buffer, chunk]);
+    }
 });
 
-client.on('close', () => {
-    console.log("total packages", packets);
+//client.on('close', () => {
+client.on('data', (data) => {
+    if(data == 'END'){
+        console.log("total packages", packets);
 
-    const writeStream = fs.createWriteStream(path.join(__dirname, "recv.txt"));
-    console.log("buffer size", buffer.length);
-    while(buffer.length){
-        const head = buffer.slice(0, 4);
-        //console.log("head", head.toString());
-        if(head.toString() != "FILE"){
-            console.log("Error Occurred.");
-            process.exit(1);
+        const writeStream = fs.createWriteStream(path.join(__dirname, "recv.txt"));
+        console.log("buffer size", buffer.length);
+        while(buffer.length){
+            const head = buffer.slice(0, 4);
+            
+            if(head.toString() != "FILE"){
+                console.log("Error Occurred.");
+                console.log(`header: ${head.toString()}`);
+                process.exit(1);
+            }
+
+            const size = parseInt(buffer.slice(4, 8), 16);
+            console.log("size", size);
+
+            const content = buffer.slice(8, size + 8);
+            const delimiter = buffer.slice(size + 8, size + 9);
+            
+            if(delimiter != "@"){
+                console.log(`Wrong delimiter. -> ${delimiter.toString()}`);
+                process.exit(1);
+            }
+
+            writeStream.write(content);
+            buffer = buffer.slice(size + 9, buffer.length);
         }
-
-        const size = parseInt(buffer.slice(4, 8), 16);
-
-        //console.log("size", size);
-
-        const content = buffer.slice(8, size + 8);
-        const delimiter = buffer.slice(size + 8, size + 9);
-        //console.log("delimiter", delimiter.toString());
-        if(delimiter != "@"){
-            console.log("Wrong delimiter.");
-            process.exit(1);
-        }
-
-        writeStream.write(content);
-        //buffer = buffer.slice(size + 9);
-        buffer = buffer.slice(size + 9, buffer.length);
+        console.log('Receive the file');
     }
-
-    console.log('disconnected from server');
+    
 });
