@@ -1,13 +1,18 @@
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
-const MPI = require('../MPI/file.js');
+const mpi = require('../MPI/file.js');
 
 const PORT = 4737;
 
 const nodeList = [];
 
-const server = net.createServer((conn) => {
+mpi.getDirInfo(path.join(`./userimage`), size=>{
+    console.log(size);
+});
+
+const server = net.createServer( async(conn) => {
+
     nodeList.push(conn);
     console.log(nodeList[0].remoteAddress);
     

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { exec } = require("child_process");
 
 module.exports.header = `FILE`;
 module.exports.delimiter = `@`;
@@ -30,4 +31,22 @@ module.exports.sendFile = (sock, path, blockSize) => {
         console.log("total packages", packages);
         console.log("total bytes sent", totalBytes);
     });
+};
+
+
+module.exports.getDirInfo = (path, callback) => {
+    exec(`du -sD ${path}`, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        const size = stdout.toString().split('\t')[0];
+        
+        callback(size);
+        //return (stdout.toString().split('\t')[0]).toString;
+    });  
 };
