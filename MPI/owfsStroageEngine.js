@@ -1,11 +1,6 @@
 const fs = require('fs');
 
 const sendFile = require('./file');
-const hosts = require('../config.json').hosts;
-
-const getDestination = (req, file, cb) => {
-    cb(null, '/dev/null');
-};
 
 const owfsStorage = (opts) => {
     this.getDestination = (opts.destination);
