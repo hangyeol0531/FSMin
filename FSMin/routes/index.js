@@ -3,7 +3,7 @@ const multer = require('multer')
 const router = express.Router();
 // const { sequelize } = require('./models/index.js');
 const fs = require('fs')
-const img_file_path = './public/userimage'
+const img_file_path = '../public/userimage/'
 
 /* GET home page. */
 const upload = multer({
@@ -19,9 +19,7 @@ const upload = multer({
 
 router.get('/', function(req, res, next) {
   console.log('/ 접속')
-  fs.readdir(img_file_path, (err, file_list) =>{
-    // console.log(file_list.length)
-    // console.log(file_list)
+  fs.readdir(img_file_path, (err ,file_list)=>{
     res.render('index', { title: 'FSM in',
       file_num : file_list.length,
       file_arr : file_list
