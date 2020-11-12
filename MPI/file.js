@@ -9,8 +9,63 @@ module.exports.tail = `END`;
 const bufHeader = Buffer.from(this.header);
 const bufDelimiter = Buffer.from(this.delimiter);
 
+module.exports.recvFileMaster = (conn, dir) =>{
+    let packets = 0;
+    let buffer = Buffer.alloc(0);
 
-module.exports.sendFile = (sock, filePath, blockSize) => {
+    conn.on('data', (chunk) => {
+        console.log(chunk);
+        if(chunk != 'END'){
+            packets++;
+            
+            buffer = Buffer.concat([buffer, chunk]);
+        }
+    });
+
+    conn.on('close',()=>{
+        console.log("total packages", packets);
+        let fileName;
+
+        const head = buffer.subarray(0, 4);
+        console.log(head);
+        if(head.toString() == "SIZE"){
+            console.log('size');
+            const nameLen = parseInt(buffer.slice(4, 6), 16);    
+            fileName = buffer.slice(6, nameLen + 6).toString();
+            buffer = buffer.slice(nameLen + 7, buffer.length);
+        }
+        
+        const writeStream = fs.createWriteStream(path.join(dir, fileName));
+        console.log("buffer size", buffer.length);
+        
+        while(buffer.length){
+            console.log('data');
+            const head = buffer.slice(0, 4);
+            if(head.toString() != "FILE"){
+                console.log("Error Occurred.");
+                console.log(`header: ${head.toString()}`);
+                //process.exit(1);
+            }
+
+            const size = parseInt(buffer.slice(4, 8), 16);
+            console.log("size", size);
+
+            const content = buffer.slice(8, size + 8);
+            const delimiter = buffer.slice(size + 8, size + 9);
+            
+            if(delimiter != "@"){
+                console.log(`Wrong delimiter. -> ${delimiter.toString()}`);
+                //process.exit(1);
+            }
+
+            writeStream.write(content);
+            buffer = buffer.slice(size + 9, buffer.length);
+        }
+        console.log('Receive the file');
+    })
+};
+
+module.exports.sendFileSlave = (conn, filePath, blockSize) => {
     const bufLenHead = Buffer.from('SIZE');
 
     const fileName = path.parse(filePath).base;
@@ -23,8 +78,7 @@ module.exports.sendFile = (sock, filePath, blockSize) => {
 
     const namePack = Buffer.concat([bufLenHead,bufNameLen,bufFileName,bufDelimiter]);
 
-    sock.write(namePack);
-    sock.write('END');
+    conn.write(namePack);
 
     const rs = fs.createReadStream(filePath, {highWaterMark: blockSize});
     let packages = 0;
@@ -40,11 +94,52 @@ module.exports.sendFile = (sock, filePath, blockSize) => {
 
         const pack = Buffer.concat([bufHeader,bufFileSize,chunk,bufDelimiter]);
         totalBytes += pack.length;
-        sock.write(pack);
+        conn.write(pack);
+        console.log(pack);
     });
 
     rs.on('close', ()=>{
-        sock.write(this.tail);
+        conn.end();
+        console.log("total packages", packages);
+        console.log("total bytes sent", totalBytes);
+    });
+};
+
+module.exports.sendFile = (sock, filePath, blockSize) => {
+    /*const bufLenHead = Buffer.from('SIZE');
+
+    const fileName = path.parse(filePath).base;
+    const bufFileName = Buffer.from(fileName);
+
+    const nameLen = ('00' + fileName.length.toString(16)).slice(-2);
+    const bufNameLen = Buffer.from(nameLen);
+
+    console.log(`${fileName} -> ${fileName.length}`);
+
+    const namePack = Buffer.concat([bufLenHead,bufNameLen,bufFileName,bufDelimiter]);
+
+    sock.write(namePack);
+*/
+    const rs = fs.createReadStream(filePath, {highWaterMark: blockSize});
+    let packages = 0;
+    let totalBytes = 0;
+
+    rs.on('data', chunk => {
+        packages++;
+
+        const packSize = ('0000' + chunk.length.toString(16)).slice(-4);
+        const bufFileSize = Buffer.from(packSize);
+        
+        console.log(`size: ${chunk.length} / hex: ${packSize.toString()}`);
+
+        const pack = Buffer.concat([bufHeader,bufFileSize,chunk,bufDelimiter]);
+        totalBytes += pack.length;
+        sock.write(pack);
+        console.log(pack);
+    });
+
+    rs.on('close', ()=>{
+        sock.write('END');
         console.log("total packages", packages);
         console.log("total bytes sent", totalBytes);
     });

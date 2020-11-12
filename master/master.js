@@ -3,15 +3,15 @@ const fs = require('fs');
 const path = require('path');
 const mpi = require('../MPI/file.js');
 
-const PORT = 4737;
+const PORT = 5000;
 
 const nodeList = [];
 
-mpi.getDirInfo(path.join(`./userimage`), size=>{
-    console.log(size);
-});
+// mpi.getDirInfo(path.join(`./userimage`), size=>{
+//     console.log(size);
+// });
 
-const server = net.createServer( async(conn) => {
+const server = net.createServer( (conn) => {
  
     nodeList.push(conn);
     console.log(nodeList[0].remoteAddress);
@@ -19,7 +19,8 @@ const server = net.createServer( async(conn) => {
     //console.log(conn.remoteAddress);
 
     //console.log(`Node connected. IP : ${conn.remoteAddress}`);
-    mpi.sendFile(conn, path.join(__dirname,`test.txt`), 0x4000);
+    //conn.write('END');
+    mpi.sendFile(nodeList[0], path.join(__dirname,`nodejs.png`), 0x4000);
     /*
     const readStream = fs.createReadStream(path.join(__dirname,`test.txt`), {highWaterMark: 0x5000});
 

@@ -1,40 +1,46 @@
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
+const mpi = require('../MPI/file.js');
 
-const masterIP = ['192.168.0.55','192.168.137.200'];
-const masterPORT = 4737;
+const PORT = 4737;
 
-const client = net.createConnection(masterPORT,masterIP[1],()=>{
-    console.log(`Connected to master node : ${masterIP[0]}.`);
-    //client.write(`asdf\r\n`);
-});
+const nodeList = [];
 
-let packets = 0;
-let buffer = Buffer.alloc(0);
+// mpi.getDirInfo(path.join(`./userimage`), size=>{
+//     console.log(size);
+// });
 
-client.on('data', (chunk) => {
-    console.log(chunk);
-    if(chunk == 'END'){
-        packets++;
-        
-        buffer = Buffer.concat([buffer, chunk]);
-    }
-});
-//client.on('close', () => {
-client.on('data', (data) => {
-    if(data == 'END'){
+const server = net.createServer( (conn) => {
+    conn.on('data',data=>{
+    });
+    mpi.recvFileMaster(conn,__dirname);
+    /*let packets = 0;
+    let buffer = Buffer.alloc(0);
+
+    
+    conn.on('data', (chunk) => {
+        console.log(chunk);
+        if(chunk != 'END'){
+            packets++;
+            
+            buffer = Buffer.concat([buffer, chunk]);
+        }
+    });
+
+    conn.on('close',()=>{
         console.log("total packages", packets);
-        let fileName = '우준선 쌤.jpg';
+        let fileName;
 
-        /*const head = buffer.slice(0, 4);
+        const head = buffer.subarray(0, 4);
         console.log(head);
         if(head.toString() == "SIZE"){
             console.log('size');
             const nameLen = parseInt(buffer.slice(4, 6), 16);    
             fileName = buffer.slice(6, nameLen + 6).toString();
             buffer = buffer.slice(nameLen + 7, buffer.length);
-        }*/
+        }
+        
         const writeStream = fs.createWriteStream(path.join(__dirname, fileName));
         console.log("buffer size", buffer.length);
         
@@ -62,6 +68,15 @@ client.on('data', (data) => {
             buffer = buffer.slice(size + 9, buffer.length);
         }
         console.log('Receive the file');
-    }
-    
+    })*/
+});
+
+
+
+server.on('error',(err)=>{
+    console.log('Error occurred');
+    throw err;
+});
+server.listen(PORT, ()=>{
+    console.log(`Server listen on ${PORT} port.`);
 });
