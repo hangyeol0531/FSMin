@@ -12,14 +12,14 @@ mpi.getDirInfo(path.join(`./userimage`), size=>{
 });
 
 const server = net.createServer( async(conn) => {
-
+ 
     nodeList.push(conn);
     console.log(nodeList[0].remoteAddress);
     
     //console.log(conn.remoteAddress);
 
     //console.log(`Node connected. IP : ${conn.remoteAddress}`);
-    //MPI.sendFile(conn, path.join(__dirname,`test.txt`), 0x4000);
+    mpi.sendFile(conn, path.join(__dirname,`test.txt`), 0x4000);
     /*
     const readStream = fs.createReadStream(path.join(__dirname,`test.txt`), {highWaterMark: 0x5000});
 

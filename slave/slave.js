@@ -6,30 +6,39 @@ const masterIP = ['192.168.0.55','192.168.137.200'];
 const masterPORT = 4737;
 
 const client = net.createConnection(masterPORT,masterIP[0],()=>{
-    console.log(`Connected to master node${masterIP[0]}.`);
+    console.log(`Connected to master node : ${masterIP[0]}.`);
     //client.write(`asdf\r\n`);
 });
 
 let packets = 0;
 let buffer = Buffer.alloc(0);
-client.on('data', (chunk)=>{
-    if(chunk != 'END'){
-        packets++;
-        console.log(chunk);
-        buffer = Buffer.concat([buffer, chunk]);
-    }
-});
 
 //client.on('close', () => {
 client.on('data', (data) => {
+    if(data != 'END'){
+        packets++;
+        console.log(data);
+        buffer = Buffer.concat([buffer, data]);
+    }
+    
     if(data == 'END'){
         console.log("total packages", packets);
+        let fileName;
 
-        const writeStream = fs.createWriteStream(path.join(__dirname, "recv.txt"));
+        const head = buffer.slice(0, 4);
+        if(head.toString() == "SIZE"){
+            console.log('size');
+            const nameLen = parseInt(buffer.slice(4, 6), 16);    
+            fileName = buffer.slice(6, nameLen + 6);
+            buffer = buffer.slice(nameLen + 7, buffer.length);
+        }
+
+        const writeStream = fs.createWriteStream(path.join(__dirname, fileName));
         console.log("buffer size", buffer.length);
+        
         while(buffer.length){
+            console.log('data');
             const head = buffer.slice(0, 4);
-            
             if(head.toString() != "FILE"){
                 console.log("Error Occurred.");
                 console.log(`header: ${head.toString()}`);
