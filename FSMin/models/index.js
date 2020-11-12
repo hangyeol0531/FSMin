@@ -37,8 +37,10 @@ var main = require('./Main_td')(sequelize,Sequelize);
 var sub1 = require('./sub_td1')(sequelize,Sequelize);
 var sub2 = require('./sub_td2')(sequelize,Sequelize);
 var sub3 = require('./sub_td3')(sequelize,Sequelize);
+var sub_count = require('./sub_count')(sequelize,Sequelize);
 main.sync()
 sub1.sync()
 sub2.sync()
 sub3.sync()
+sub_count.sync()
 module.exports = db;
