@@ -20,12 +20,26 @@
       <input type='submit'>
     </form>
 
-    <span><%= file_num%>개의 파일이 존재합니다.</span>
+    <span class="file_num"><%= file_num%>개의 파일이 존재합니다.</span>
+    
+    
     <!-- images -->
     <div class="images">
-      <img src="" alt="">
+      <% for(let i = 0; i < file_num; i++ ){%>
+        <%let path = "/userimage/"+ file_arr[i] %>
+        <img src=<%-path%> alt="">
+
+        
+      <% }%>
     </div>
+
   </div>
+
+
+
+
+
+  <!-- jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script>
     $(document).ready(function () {
