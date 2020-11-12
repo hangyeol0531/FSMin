@@ -1,9 +1,11 @@
 const express = require('express');
 const multer = require('multer')
 const router = express.Router();
-// const { sequelize } = require('./models/index.js');
+// const { sequelize } = require('../models/dbindex.js');
 const fs = require('fs')
-const img_file_path = '../public/userimage/'
+const img_file_path = './public/userimage/'
+const bodyParser = require('body-parser');
+const { callbackify } = require('util');
 
 /* GET home page. */
 const upload = multer({
@@ -27,10 +29,19 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.post('/delete', (req, res) =>{
+  let path = `${img_file_path}/${req.body.img_name}`
+  console.log(path)
+  fs.unlink(path, (err) =>{
+    if(err) throw err
+    res.status(200).send("<script>alert('파일이 정상적으로 삭제되었습니다.'); window.location = '/' </script>")
+  })
+})
+
 router.post('/save_Image', upload.single('userfile'), (req,res)=>{
   console.log('save Image 접속')
   console.log('파일 전송 완료')
-  res.status(401).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
+  res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
 
 

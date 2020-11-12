@@ -41,5 +41,4 @@ main.sync()
 sub1.sync()
 sub2.sync()
 sub3.sync()
-
 module.exports = db;
