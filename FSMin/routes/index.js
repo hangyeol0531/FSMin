@@ -6,6 +6,7 @@ const fs = require('fs')
 const img_file_path = './public/userimage/'
 const bodyParser = require('body-parser');
 const { callbackify } = require('util');
+const func = require('./func')
 
 models.sequelize.sync().then(() => {
   console.log(" DB 연결 성공");
@@ -48,7 +49,9 @@ const upload = multer({
              }).then(result =>{
               models.sub_td2.create({
                 'src' : new Date().valueOf()+file.originalname
-               })
+               }).then(() =>{
+                func.sub_data_check()
+             })
              })
           }else if(sub_route_min[0] + sub_route_min[1] == 2){
             models.sub_td1.create({
@@ -56,6 +59,8 @@ const upload = multer({
              }).then(result =>{
               models.sub_td3.create({
                 'src' : new Date().valueOf()+file.originalname
+               }).then(() =>{
+                  func.sub_data_check()
                })
              })
           }else if(sub_route_min[0] + sub_route_min[1] == 3){
@@ -64,7 +69,9 @@ const upload = multer({
              }).then(result =>{
               models.sub_td3.create({
                 'src' : new Date().valueOf()+file.originalname
-               })
+               }).then(() =>{
+                func.sub_data_check()
+             })
              })
           }
         })
