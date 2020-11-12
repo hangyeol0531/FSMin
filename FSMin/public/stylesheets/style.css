@@ -85,7 +85,8 @@ input[type=submit] {
 
 /* file-num */
 .file_num{
-  
+  margin-left: 1rem;
+  font-size: 1.2rem;
 }
 
 
@@ -100,12 +101,13 @@ input[type=submit] {
 .images img{
   height: 15rem;
   width: 16%;
-  margin-right: 5%;
+  margin-left: 5%;
+  margin-bottom: 5rem;
 
   overflow: hidden;
   object-fit: contain;
 }
 
-.images img:last-child{
+.images img:first-child{
   margin-right: 0;
 }
