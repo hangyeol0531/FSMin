@@ -40,8 +40,8 @@ const upload = multer({
         }
         console.log(sub_route_min)
         models.Main_td.bulkCreate([
-        {'tb_num' : `${sub_route_min[0]}`,'src' : new Date().valueOf()+file.originalname},
-        {'tb_num' : `${sub_route_min[1]}`,'src' : new Date().valueOf()+file.originalname},
+        {'tb_num' : `${sub_route_min[0] + 1}`,'src' : new Date().valueOf()+file.originalname},
+        {'tb_num' : `${sub_route_min[1] + 1}`,'src' : new Date().valueOf()+file.originalname},
         ]).then(result =>{
           if(sub_route_min[0] + sub_route_min[1] == 1){
             models.sub_td1.create({
