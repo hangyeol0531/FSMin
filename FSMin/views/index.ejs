@@ -21,22 +21,24 @@
     </form>
 
     <span class="file_num"><%= file_num%>개의 파일이 존재합니다.</span>
-    
-    
+
+
     <!-- images -->
     <div class="images">
       <% for(let i = 0; i < file_num; i++ ){%>
-        <%let path = "/userimage/"+ file_arr[i] %>
-        <img src=<%-path%> alt="">
-
-        
+      <%let path = "/userimage/"+ file_arr[i] %>
+      <img onclick=del_file() src=<%-path%>>
+      <button onclick="del_file(`<%-file_arr[i]%>`)" class="del_btn">DEL</button>
+      <a href="userimage/<%-file_arr[i]%>" download>My Doc</a>
       <% }%>
     </div>
+      
 
   </div>
 
   <!-- jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
     $(document).ready(function () {
       var fileTarget = $('.submit #userfile');
@@ -50,6 +52,32 @@
         $(this).siblings('.upload-name').val(filename);
       });
     });
+
+    function del_file(file_name) {
+      $.ajax({
+        url: 'delete',
+        type: 'post',
+        data: { 'img_name':  file_name},
+        dataType: 'json'
+      }).then((data, textStatus, jqXHR) => {
+        console.log(data);
+      }, (jqXHR, textStatus, errorThrown) => {
+
+      })
+    }
+
+    function down_file(file_name) {
+      $.ajax({
+        // url: 'http://192.168.0.21/download',
+        url: 'download',
+        type: 'get',
+        data: { "flie": file_name }
+      }).then((data, textStatus, jqXHR) => {
+        console.log(data);
+      }, (jqXHR, textStatus, errorThrown) => {
+        console.log(errorThrown);
+      })
+    }
   </script>
 </body>
 
