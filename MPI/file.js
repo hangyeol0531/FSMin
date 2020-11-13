@@ -68,7 +68,7 @@ module.exports.recvFileMaster = (conn, dir) =>{
             console.log('size');
             const nameLen = parseInt(buffer.slice(4, 6), 16);    
             fileName = buffer.slice(6, nameLen + 6).toString();
-            console.log(filename.toString());
+            console.log(fileName.toString());
             buffer = buffer.slice(nameLen + 7, buffer.length);
         }
         
