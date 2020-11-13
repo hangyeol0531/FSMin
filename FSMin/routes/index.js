@@ -2,7 +2,8 @@ const express = require('express');
 const multer = require('multer')
 const router = express.Router();
 const fs = require('fs')
-const img_file_path = '../public/userimage'
+const models = require('../models/index.js');
+const img_file_path = './public/userimage/'
 const bodyParser = require('body-parser');
 const func = require('./func');
 var cors = require('cors');
@@ -24,7 +25,8 @@ const upload = multer({
       cb(null, img_file_path);
     },
     filename: function (req, file, cb) {
-      cb(null, new Date().valueOf()+file.originalname);
+      let file_name = new Date().valueOf()+file.originalname
+      cb(null, file_name);
       console.log(file)
 
       let sub_route_value = []
@@ -45,36 +47,38 @@ const upload = multer({
         }
         console.log(sub_route_min)
         models.Main_td.bulkCreate([
-        {'tb_num' : `${sub_route_min[0] + 1}`,'src' : new Date().valueOf()+file.originalname},
-        {'tb_num' : `${sub_route_min[1] + 1}`,'src' : new Date().valueOf()+file.originalname},
+        {
+          'tb_num1' : `${sub_route_min[0] + 1}`,
+          'tb_num2' : `${sub_route_min[1] + 1}`,
+          'src' : file_name}
         ]).then(result =>{
           // console.log(file)
           if(sub_route_min[0] + sub_route_min[1] == 1){
             models.sub_td1.create({
-              'src' : new Date().valueOf()+file.originalname
+              'src' : file_name
              }).then(result =>{
               models.sub_td2.create({
-                'src' : new Date().valueOf()+file.originalname
+                'src' : file_name
                }).then(() =>{
                 func.sub_data_check()
              })
              })
           }else if(sub_route_min[0] + sub_route_min[1] == 2){
             models.sub_td1.create({
-              'src' : new Date().valueOf()+file.originalname
+              'src' : file_name
              }).then(result =>{
               models.sub_td3.create({
-                'src' : new Date().valueOf()+file.originalname
+                'src' : file_name
                }).then(() =>{
                   func.sub_data_check()
                })
              })
           }else if(sub_route_min[0] + sub_route_min[1] == 3){
             models.sub_td2.create({
-              'src' : new Date().valueOf()+file.originalname
+              'src' : file_name
              }).then(result =>{
               models.sub_td3.create({
-                'src' : new Date().valueOf()+file.originalname
+                'src' : file_name
                }).then(() =>{
                 func.sub_data_check()
              })
@@ -97,12 +101,8 @@ router.get('/', function (req, res, next) {
   })
 });
 
-
 router.post('/delete', (req, res) => {
-  console.log(req.body);
   let path = `${img_file_path}/${req.body.img_name}`
-  console.log(path)
-
   fs.unlink(path, function (err) {
     if (err && err.code == 'ENOENT') {
       // file doens't exist
@@ -111,10 +111,73 @@ router.post('/delete', (req, res) => {
       // other errors, e.g. maybe we don't have enough permission
       console.error("Error occurred while trying to remove file");
     } else {
-      // console.info(`removed`);
+      console.log("filename :  " + req.body.img_name)
+      models.Main_td.findAll({
+        where: {
+          src : req.body.img_name
+        }
+      }).then(result =>{
+        let tb1 = Number(result[0].dataValues.tb_num1)
+        let tb2 = Number(result[0].dataValues.tb_num2)
+        console.log(`tb1 : ${tb1} tb2 : ${tb2}`)
+        if(tb1 + tb2 == 3){
+          console.log('1접속')
+          models.sub_td1.destroy({
+            where: {
+              src : req.body.img_name
+            }
+          }).then(result => {
+            models.sub_td2.destroy({
+              where: {
+                src : req.body.img_name
+              }
+            }).then(result => {
+              func.main_table_delete(req)
+            })
+          })
+        }else if(tb1+tb2 == 4){
+          console.log('3접속')
+          models.sub_td1.destroy({
+            where: {
+              src : req.body.img_name
+            }
+          }).then(result => {
+            models.sub_td3.destroy({
+              where: {
+                src : req.body.img_name
+              }
+            }).then(result => {
+              func.main_table_delete(req)
+            })
+          })
+        }else if(tb1 + tb2 == 5){
+          console.log('5접속')
+          console.log(req.body.img_name)
+          models.sub_td2.destroy({
+            where: {
+              src : req.body.img_name
+            }
+          }).then(result => {
+            console.log('---------------')
+            models.sub_td3.destroy({
+              where: {
+                src : req.body.img_name
+              }
+            }).then(result => {
+              func.main_table_delete(req)
+            })
+          })
+        }
+      })
       res.status(200).send("<script>alert('파일이 정상적으로 삭제되었습니다.'); window.location = '/' </script>")
     }
   });
+})
+
+router.get('/download', (req, res) =>{
+  const path = `${img_file_path}${req.query.img_name}`
+  console.log(path)
+  res.status(200).download(path);
 })
 
 router.post('/save_Image', upload.single('userfile'), (req, res) => {
@@ -123,6 +186,5 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
   console.log(req.file.size/1024)
   res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
-
 
 module.exports = router;

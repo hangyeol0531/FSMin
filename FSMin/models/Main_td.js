@@ -8,7 +8,11 @@ module.exports = ((sequelize,DataTypes)=>{
             allowNull: true,
             autoIncrement : true
         },
-        tb_num:{
+        tb_num1:{
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        },
+        tb_num2:{
             type: Sequelize.INTEGER,
             allowNull: true,
         },
@@ -22,6 +26,6 @@ module.exports = ((sequelize,DataTypes)=>{
         }
     },{
         timestamps:true,
-        paranoid : true, // 삭제일 (복구용)
+        paranoid : false, // 삭제일 (복구용)
     })
 })

@@ -12,12 +12,12 @@ module.exports = ((sequelize,DataTypes)=>{
             type: Sequelize.STRING(100),
             allowNull: true,
         },
-        idx:{
+        cap:{
             type: Sequelize.INTEGER,
             allowNull: true,
         }
     },{
         timestamps:true,
-        paranoid : true, // 삭제일 (복구용)
+        paranoid : false, // 삭제일 (복구용)
     })
 })

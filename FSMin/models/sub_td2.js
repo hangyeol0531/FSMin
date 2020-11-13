@@ -18,6 +18,6 @@ module.exports = ((sequelize,DataTypes)=>{
         }
     },{
         timestamps:true,
-        paranoid : true, // 삭제일 (복구용)
+        paranoid : false, // 삭제일 (복구용)
     })
 })
