@@ -1,5 +1,6 @@
 const models = require('../models/index.js');
 const Sequelize = require('sequelize');
+const fs = require('fs')
 
 exports.sub_data_check = () =>{
     models.sub_td1.findAndCountAll({
