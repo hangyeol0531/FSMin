@@ -29,7 +29,7 @@
       <%let path = "/userimage/"+ file_arr[i] %>
       <img onclick=del_file() src=<%-path%>>
       <button onclick="del_file(`<%-file_arr[i]%>`)" class="del_btn">DEL</button>
-      <a href="userimage/<%-file_arr[i]%>" download>My Doc</a>
+      <a href="userimage/<%-file_arr[i]%>" download>download</a>
       <% }%>
     </div>
       
@@ -54,6 +54,7 @@
     });
 
     function del_file(file_name) {
+      history.go(0);
       $.ajax({
         url: 'delete',
         type: 'post',
