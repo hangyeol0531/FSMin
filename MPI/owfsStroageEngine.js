@@ -5,20 +5,33 @@ const sendFile = require('./file');
 
 function owfsStorage(opts){
     this.getDestination = (opts.destination);
-    this.getFilename = (opts.filename);
+    this.getFileName = (opts.filename);
+
+    
 }
 
 owfsStorage.prototype._handleFile = function _handleFile(req, file, cb){
-    this.getDestination(req, file, function(err, dest){
+    var that = this;
+    console.log(this.getDestination);
+    
+    that.getDestination(req, file, function(err, dest){
         if (err) return cb(err);
-        const conn = net.createConnection(dest.port, dest.ip, ()=>{
-            sendFile.sendStreamSlave(file.stream, conn, 'asdf.jpg');
+        console.log(this.getFileName);
+        that.getFileName(req, file, function(err, filename){
+            
+            if(err) return cb(err);
+            const conn = net.createConnection(dest.port, dest.ip, ()=>{
+                sendFile.sendStreamSlave(file.stream, conn, filename, (packcnt,packsize)=>{
+                    cb(null, {
+                        path: dest,
+                        size: packsize
+                    })
+                });
+            });
+            
         });
-        // this.getFilename(req, file, function(err, filename){
-        //     if(err) return cb(err);
-            
-            
-        // });
+        
+        
     });
 }
 

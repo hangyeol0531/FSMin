@@ -9,10 +9,10 @@ module.exports.tail = `END`;
 const bufHeader = Buffer.from(this.header);
 const bufDelimiter = Buffer.from(this.delimiter);
 
-module.exports.sendStreamSlave = (stream, conn, fileName) => {
+module.exports.sendStreamSlave = (stream, conn, fileName, cb) => {
     const bufLenHead = Buffer.from('SIZE');
     const bufFileName = Buffer.from(fileName);
-    const nameLen = ('00' + fileName.length.toString(16)).slice(-2);
+    const nameLen = ('00' + bufFileName.length.toString(16)).slice(-2);
     const bufNameLen = Buffer.from(nameLen);
     console.log(`${fileName} -> ${fileName.length}`);
 
@@ -41,6 +41,7 @@ module.exports.sendStreamSlave = (stream, conn, fileName) => {
         conn.end();
         console.log("total packages", packages);
         console.log("total bytes sent", totalBytes);
+        cb(packages,totalBytes);
     });
 };
 
@@ -67,6 +68,7 @@ module.exports.recvFileMaster = (conn, dir) =>{
             console.log('size');
             const nameLen = parseInt(buffer.slice(4, 6), 16);    
             fileName = buffer.slice(6, nameLen + 6).toString();
+            console.log(filename.toString());
             buffer = buffer.slice(nameLen + 7, buffer.length);
         }
         
