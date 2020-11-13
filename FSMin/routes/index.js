@@ -6,7 +6,8 @@ const fs = require('fs')
 const img_file_path = './public/userimage/'
 const bodyParser = require('body-parser');
 const { callbackify } = require('util');
-const func = require('./func')
+const func = require('./func');
+var storage = require('../../MPI/owfsStroageEngine');
 
 models.sequelize.sync().then(() => {
   console.log(" DB 연결 성공");
@@ -17,9 +18,9 @@ models.sequelize.sync().then(() => {
 
 /* GET home page. */
 const upload = multer({
-  storage: multer.diskStorage({
+  storage: storage({
     destination: function (req, file, cb) {
-      cb(null, img_file_path);
+      cb(null, {"ip":"192.168.0.50", "port":4737});
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf()+file.originalname);

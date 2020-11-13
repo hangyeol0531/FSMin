@@ -4,7 +4,7 @@ const file = require('./file');
 
 const hosts = require('../config.json').hosts;
 
-const saveFile()
+//const saveFile()
 
 const getDiskSize = (nodeList, callback) =>{
     let arr = [];

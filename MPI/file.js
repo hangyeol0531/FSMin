@@ -26,7 +26,7 @@ module.exports.sendStreamSlave = (stream, conn, fileName) => {
     stream.on('data', chunk => {
         packages++;
 
-        const packSize = ('0000' + chunk.length.toString(16)).slice(-4);
+        const packSize = ('00000' + chunk.length.toString(16)).slice(-5);
         const bufFileSize = Buffer.from(packSize);
         
         console.log(`size: ${chunk.length} / hex: ${packSize.toString()}`);
@@ -82,11 +82,11 @@ module.exports.recvFileMaster = (conn, dir) =>{
                 //process.exit(1);
             }
 
-            const size = parseInt(buffer.slice(4, 8), 16);
+            const size = parseInt(buffer.slice(4, 9), 16);
             console.log("size", size);
 
-            const content = buffer.slice(8, size + 8);
-            const delimiter = buffer.slice(size + 8, size + 9);
+            const content = buffer.slice(9, size + 9);
+            const delimiter = buffer.slice(size + 9, size + 10);
             
             if(delimiter != "@"){
                 console.log(`Wrong delimiter. -> ${delimiter.toString()}`);
@@ -94,7 +94,7 @@ module.exports.recvFileMaster = (conn, dir) =>{
             }
 
             writeStream.write(content);
-            buffer = buffer.slice(size + 9, buffer.length);
+            buffer = buffer.slice(size + 10, buffer.length);
         }
         console.log('Receive the file');
     })
