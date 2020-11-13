@@ -14,6 +14,17 @@ const server = net.createServer( (conn) => {
                 console.log(size);
             });
         }
+        else if(data.toString().substring(0,5) == '[DEL]'){
+            const fileninfo = data.slice(5,data.length);
+            fs.unlink(fileninfo, err =>{
+                if(err === undefined || err == null){
+                    conn.write('OK');
+                }
+                else{
+                    conn.write('ERR');
+                }
+            });
+        }
     });
 });
 
