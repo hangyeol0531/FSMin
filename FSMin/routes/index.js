@@ -45,7 +45,6 @@ router.post('/delete', (req, res) => {
       // console.info(`removed`);
       res.status(200).send("<script>alert('파일이 정상적으로 삭제되었습니다.'); window.location = '/' </script>")
     }
-    res.redirect('/');
   });
 })
 
