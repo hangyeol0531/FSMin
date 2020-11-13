@@ -30,7 +30,7 @@
       <div class="image">
         <img onclick=del_file() src=<%-path%>>
         <button onclick="del_file(`<%-file_arr[i]%>`)" class="del_btn">DEL</button>
-        <a href="userimage/<%-file_arr[i]%>" download>download</a>
+        <button class="down_btn"><a href="userimage/<%-file_arr[i]%>" download>download</a></button>
       </div>
       <% }%>
     </div>
