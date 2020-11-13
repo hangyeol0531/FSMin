@@ -11,6 +11,10 @@ module.exports = ((sequelize,DataTypes)=>{
             type: Sequelize.INTEGER,
             allowNull: true,
         },
+        cap:{
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        }
     },{
         timestamps: false,
         paranoid : false, // 삭제일 (복구용)

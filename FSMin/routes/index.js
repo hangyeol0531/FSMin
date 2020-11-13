@@ -5,8 +5,11 @@ const models = require('../models/index.js');
 const fs = require('fs')
 const img_file_path = './public/userimage/'
 const bodyParser = require('body-parser');
-const { callbackify } = require('util');
-const func = require('./func')
+const func = require('./func');
+var cors = require('cors');
+
+// CORS 설정
+router.use(cors());
 
 models.sequelize.sync().then(() => {
   console.log(" DB 연결 성공");
@@ -23,8 +26,11 @@ const upload = multer({
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf()+file.originalname);
+      console.log(file)
+
       let sub_route_value = []
       let sub_route_min = []
+
       models.sub_count.findAll({
       }).then(result =>{
         result.forEach(i => {
@@ -35,7 +41,7 @@ const upload = multer({
           sub_route_min = [1, 2]
         }else if(high == 1){
           sub_route_min = [0, 2]
-        }else{
+        }else if(high == 2){
           sub_route_min = [0, 1]
         }
         console.log(sub_route_min)
@@ -102,27 +108,7 @@ router.post('/delete', (req, res) =>{
 
 router.post('/save_Image', upload.single('userfile'), (req,res)=>{
   console.log('파일 전송 완료')
-  // let sub_route_value = []
-  // let sub_route_min = []
-  // models.sub_count.findAll({
-  // }).then(result =>{
-  //   result.forEach(i => {
-  //     sub_route_value.push(i.dataValues.num)
-  //   });
-  //   let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
-  //   if(high == 0){
-  //     sub_route_min = [1, 2]
-  //   }else if(high == 1){
-  //     sub_route_min = [0, 2]
-  //   }else{
-  //     sub_route_min = [0, 1]
-  //   }
-  //   console.log(sub_route_min)
-  //   models.Main_td.bulkCreate([
-  //   {'td_idx' : sub_route_min[0],'src' : td1_count},
-  //   {'td_idx' : sub_route_min[1],'src' : td2_count},
-  //   ])
-  // })
+  console.log(req.file.size/1024)
   res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
 
