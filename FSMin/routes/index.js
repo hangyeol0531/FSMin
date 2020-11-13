@@ -43,6 +43,7 @@ const upload = multer({
         {'tb_num' : `${sub_route_min[0] + 1}`,'src' : new Date().valueOf()+file.originalname},
         {'tb_num' : `${sub_route_min[1] + 1}`,'src' : new Date().valueOf()+file.originalname},
         ]).then(result =>{
+          // console.log(file)
           if(sub_route_min[0] + sub_route_min[1] == 1){
             models.sub_td1.create({
               'src' : new Date().valueOf()+file.originalname
@@ -125,5 +126,10 @@ router.post('/save_Image', upload.single('userfile'), (req,res)=>{
   res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
 
+router.get('/download', (req, res) =>{
+  const path = `${img_file_path}${req.query.img_name}`
+  console.log(path)
+  res.status(200).download(path);
+})
 
 module.exports = router;
