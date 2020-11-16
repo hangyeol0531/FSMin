@@ -12,7 +12,7 @@ module.exports = ((sequelize,DataTypes)=>{
             type: Sequelize.STRING(100),
             allowNull: true,
         },
-        cap:{
+        byte:{
             type: Sequelize.INTEGER,
             allowNull: true,
         }

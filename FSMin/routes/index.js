@@ -27,65 +27,6 @@ const upload = multer({
     filename: function (req, file, cb) {
       let file_name = new Date().valueOf()+file.originalname
       cb(null, file_name);
-      console.log(file)
-
-      let sub_route_value = []
-      let sub_route_min = []
-
-      models.sub_count.findAll({
-      }).then(result =>{
-        result.forEach(i => {
-          sub_route_value.push(i.dataValues.num)
-        });
-        let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
-        if(high == 0){
-          sub_route_min = [1, 2]
-        }else if(high == 1){
-          sub_route_min = [0, 2]
-        }else if(high == 2){
-          sub_route_min = [0, 1]
-        }
-        console.log(sub_route_min)
-        models.Main_td.bulkCreate([
-        {
-          'tb_num1' : `${sub_route_min[0] + 1}`,
-          'tb_num2' : `${sub_route_min[1] + 1}`,
-          'src' : file_name}
-        ]).then(result =>{
-          // console.log(file)
-          if(sub_route_min[0] + sub_route_min[1] == 1){
-            models.sub_td1.create({
-              'src' : file_name
-             }).then(result =>{
-              models.sub_td2.create({
-                'src' : file_name
-               }).then(() =>{
-                func.sub_data_check()
-             })
-             })
-          }else if(sub_route_min[0] + sub_route_min[1] == 2){
-            models.sub_td1.create({
-              'src' : file_name
-             }).then(result =>{
-              models.sub_td3.create({
-                'src' : file_name
-               }).then(() =>{
-                  func.sub_data_check()
-               })
-             })
-          }else if(sub_route_min[0] + sub_route_min[1] == 3){
-            models.sub_td2.create({
-              'src' : file_name
-             }).then(result =>{
-              models.sub_td3.create({
-                'src' : file_name
-               }).then(() =>{
-                func.sub_data_check()
-             })
-             })
-          }
-        })
-      })
     }
   }),
 });
@@ -100,6 +41,7 @@ router.get('/', function (req, res, next) {
     });
   })
 });
+
 
 router.post('/delete', (req, res) => {
   let path = `${img_file_path}/${req.body.img_name}`
@@ -183,7 +125,65 @@ router.get('/download', (req, res) =>{
 router.post('/save_Image', upload.single('userfile'), (req, res) => {
   console.log('save Image 접속')
   console.log('파일 전송 완료')
-  console.log(req.file.size/1024)
+  let file_name = req.file.filename
+  console.log(file_name)
+  let sub_route_value = []
+  let sub_route_min = []
+
+  models.sub_count.findAll({
+  }).then(result =>{
+    result.forEach(i => {
+      sub_route_value.push(i.dataValues.num)
+    });
+    let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
+    if(high == 0){
+      sub_route_min = [1, 2]
+    }else if(high == 1){
+      sub_route_min = [0, 2]
+    }else if(high == 2){
+      sub_route_min = [0, 1]
+    }
+    console.log(sub_route_min)
+    models.Main_td.bulkCreate([
+    {
+      'tb_num1' : `${sub_route_min[0] + 1}`,
+      'tb_num2' : `${sub_route_min[1] + 1}`,
+      'src' : file_name}
+    ]).then(result =>{
+      // console.log(file)
+      if(sub_route_min[0] + sub_route_min[1] == 1){
+        models.sub_td1.create({
+          'src' : file_name
+          }).then(result =>{
+          models.sub_td2.create({
+            'src' : file_name
+            }).then(() =>{
+            func.sub_data_check()
+          })
+          })
+      }else if(sub_route_min[0] + sub_route_min[1] == 2){
+        models.sub_td1.create({
+          'src' : file_name
+          }).then(result =>{
+          models.sub_td3.create({
+            'src' : file_name
+            }).then(() =>{
+              func.sub_data_check()
+            })
+          })
+      }else if(sub_route_min[0] + sub_route_min[1] == 3){
+        models.sub_td2.create({
+          'src' : file_name
+          }).then(result =>{
+          models.sub_td3.create({
+            'src' : file_name
+            }).then(() =>{
+            func.sub_data_check()
+          })
+          })
+      }
+    })
+  })
   res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
 
