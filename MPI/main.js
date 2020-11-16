@@ -5,6 +5,23 @@ const file = require('./file');
 const hosts = require('../config.json').hosts;
 
 //const saveFile()
+const delFile = (host, filename, cb)=>{
+    const conn = net.connect(host.port, host.ip, ()=>{
+        conn.write(`[DEL]${filename}`);
+    });
+    conn.on('error',err=>{
+        cb('[ERROR] node server closed.');
+    });
+    conn.on('data', data=>{
+        if(data.toString() == 'OK'){
+            cb(undefined);
+        }
+        else{
+            cb(`[ERROR] delete failed ${data}`);
+        }
+    });
+}
+
 
 const getDiskSize = (nodeList, callback) =>{
     let arr = [];
@@ -33,6 +50,11 @@ const getDiskSize = (nodeList, callback) =>{
 
 const ar = [{"ip":"localhost","port":5000}];
 
-getDiskSize(hosts,(data)=>{
-    console.log(data);
-});
+delFile(hosts[0],"test.txt",(err)=>{
+    if(err) throw err;
+    console.log(err);
+})
+
+// getDiskSize(hosts,(data)=>{
+//     console.log(data);
+// });

@@ -20,7 +20,7 @@ models.sequelize.sync().then(() => {
 const upload = multer({
   storage: storage({
     destination: function (req, file, cb) {
-      cb(null, {"ip":"192.168.0.50", "port":4737});
+      cb(null, [{"ip":"192.168.0.55", "port":5000}]);
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf()+file.originalname);

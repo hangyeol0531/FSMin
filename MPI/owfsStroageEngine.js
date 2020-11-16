@@ -12,25 +12,44 @@ function owfsStorage(opts){
 
 owfsStorage.prototype._handleFile = function _handleFile(req, file, cb){
     var that = this;
-    console.log(this.getDestination);
     
     that.getDestination(req, file, function(err, dest){
         if (err) return cb(err);
-        console.log(this.getFileName);
         that.getFileName(req, file, function(err, filename){
+            let checked = 0;
+            let arr = [];
             
-            if(err) return cb(err);
-            const conn = net.createConnection(dest.port, dest.ip, ()=>{
-                sendFile.sendStreamSlave(file.stream, conn, filename, (packcnt,packsize)=>{
-                    cb(null, {
-                        path: dest,
-                        size: packsize
-                    })
+            dest.forEach((host, idx)=>{
+                if(err) return cb(err);
+                const conn = net.createConnection(host.port, host.ip, ()=>{
+                    conn.write('[POST]');
                 });
+                conn.on('data', data =>{
+                    if(data == 'OK'){
+                        console.log('sending')
+                        sendFile.sendStreamSlave(file.stream, conn, filename, (packcnt,packsize)=>{
+                            arr[idx] = 'OK';
+                            if(++checked == dest.length){
+                                cb(null, {
+                                    path: dest,
+                                    size: packsize
+                                });
+                            }
+                        });
+                    }
+                })
+                conn.on('error', error=>{
+                    arr[idx] = 'X';
+                    console.log(`Server Error (${host.ip}:${host.port})`);
+                    if(++checked == dest.length){
+                        cb(host, {
+                            path: dest
+                        });
+                    }
+                });
+
             });
-            conn.on('error',(error)=>{
-                console.log(`Server Error (${host.ip}:${host.port})`);
-            });
+            
             
         });
         
