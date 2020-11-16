@@ -1,0 +1,133 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+  
+}
+
+.warp{
+  padding: 10%;
+}
+/*  */
+
+
+/* title */
+.title{
+  display: inline-block;
+  font-size: 8rem;
+  margin: 1rem 0;
+}
+
+p{
+  display: inline-block;
+  font-size: 2rem;
+  color: #444;
+}
+
+
+
+
+/* form */
+form{
+  float: right;
+  clear: both;
+}
+
+.submit{
+  display: inline-block;
+}
+
+.submit label {
+  display: inline-block;
+  padding: .5em .75em;
+
+  color: #fff;
+  font-size: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: #999;
+  cursor: pointer;
+  /* border: 1px solid #444; */
+  border-radius: 50px;
+  -webkit-transition: background-color 0.2s;
+  transition: background-color 0.2s;
+}
+
+.submit input[type=file] {
+  display: inline-block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+input[type=submit] {
+  border: none;
+  border-radius: 50px;
+  padding: .5em .75em;
+  font-size: inherit;
+  margin-left: 1em;
+}
+
+.upload-name{
+  border: none;
+  padding: .5em .75em;
+  border-radius: 50px;
+}
+
+/* file-num */
+.file_num{
+  margin-left: 1rem;
+  font-size: 1.2rem;
+}
+
+
+
+
+/* image */
+
+.images{
+  margin-top: 3rem;
+}
+
+.image{
+  position: relative;
+  text-align: center;
+  display: inline-block;
+  height: 15rem;
+  width: 16%;
+  margin-right: 4%;
+  margin-bottom: 5rem;
+}
+
+.images .image img{
+  width: 100%;
+  overflow: hidden;
+}
+
+.image:nth-child(5n){
+  margin-right: 0;
+}
+
+
+.images button{
+  display: inline-block;
+  height: 2.2rem;
+  background: #4E9CAF;
+  text-align: center;
+  border-radius: 1rem;
+  color: white;
+  border: none;
+  padding: 0 0.8rem;
+  font-size: 0.8vw;
+}
