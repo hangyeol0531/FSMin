@@ -130,73 +130,73 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
   let sub_route_value = []
   let sub_route_min = []
   models.sub_count.findAll({
-  }).then(result =>{
-    models.Main_td.sum('byte', {
-      where :{
-        byte : 1
-      }
-    }).then(sum =>{
-
-    })
+  }).then(result =>{///
+    models.sub_count.findAll({
+      attributes : ['byte']
+    }).then((byte_num)=>{
+      sub_route_value.push(byte_num[0].byte)
+      sub_route_value.push(byte_num[1].byte)
+      sub_route_value.push(byte_num[2].byte)
     //sub_route_value : 여기에다가 바이트 배열을 만들어야함
-    let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
-    if(high == 0){
-      sub_route_min = [1, 2]
-    }else if(high == 1){
-      sub_route_min = [0, 2]
-    }else if(high == 2){
-      sub_route_min = [0, 1]
-    }
-    console.log(sub_route_min)
-    models.Main_td.bulkCreate([
-    {
-      'tb_num1' : `${sub_route_min[0] + 1}`,
-      'tb_num2' : `${sub_route_min[1] + 1}`,
-      'src' : file_name,
-      'byte' : req.file.size
-    }
-    ]).then(result =>{
-      // console.log(file)
-      if(sub_route_min[0] + sub_route_min[1] == 1){
-        models.sub_td1.create({
-          'src' : file_name,
-          'byte' : req.file.size
-          }).then(result =>{
-          models.sub_td2.create({
+      let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
+      if(high == 0){
+        sub_route_min = [1, 2]
+      }else if(high == 1){
+        sub_route_min = [0, 2]
+      }else if(high == 2){
+        sub_route_min = [0, 1]
+      }
+      console.log(sub_route_min)
+      models.Main_td.bulkCreate([
+      {
+        'tb_num1' : `${sub_route_min[0] + 1}`,
+        'tb_num2' : `${sub_route_min[1] + 1}`,
+        'src' : file_name,
+        'byte' : req.file.size
+      }
+      ]).then(result =>{
+        // console.log(file)
+        if(sub_route_min[0] + sub_route_min[1] == 1){
+          models.sub_td1.create({
             'src' : file_name,
             'byte' : req.file.size
-            }).then(() =>{
-            func.sub_data_check()
-          })
-        })
-      }else if(sub_route_min[0] + sub_route_min[1] == 2){
-        models.sub_td1.create({
-          'src' : file_name,
-          'byte' : req.file.size
-          }).then(result =>{
-          models.sub_td3.create({
-            'src' : file_name,
-            'byte' : req.file.size
-            }).then(() =>{
+            }).then(result =>{
+            models.sub_td2.create({
+              'src' : file_name,
+              'byte' : req.file.size
+              }).then(() =>{
               func.sub_data_check()
             })
           })
-      }else if(sub_route_min[0] + sub_route_min[1] == 3){
-        models.sub_td2.create({
-          'src' : file_name,
-          'byte' : req.file.size
-          }).then(result =>{
-          models.sub_td3.create({
+        }else if(sub_route_min[0] + sub_route_min[1] == 2){
+          models.sub_td1.create({
             'src' : file_name,
             'byte' : req.file.size
-            }).then(() =>{
-            func.sub_data_check()
+            }).then(result =>{
+            models.sub_td3.create({
+              'src' : file_name,
+              'byte' : req.file.size
+              }).then(() =>{
+                func.sub_data_check()
+              })
+            })
+        }else if(sub_route_min[0] + sub_route_min[1] == 3){
+          models.sub_td2.create({
+            'src' : file_name,
+            'byte' : req.file.size
+            }).then(result =>{
+            models.sub_td3.create({
+              'src' : file_name,
+              'byte' : req.file.size
+              }).then(() =>{
+              func.sub_data_check()
+            })
           })
-        })
-      }
+        }
+      })
     })
+    res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
   })
-  res.status(200).send("<script>alert('파일이 정상적으로 전송되었습니다.'); window.location = '/' </script>")
 })
 
 module.exports = router;
