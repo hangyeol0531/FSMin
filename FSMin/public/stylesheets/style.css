@@ -112,7 +112,9 @@ input[type=submit] {
 
 .images .image img{
   width: 100%;
+  height: 18vw;
   overflow: hidden;
+  object-fit: contain;
 }
 
 .image:nth-child(5n){
