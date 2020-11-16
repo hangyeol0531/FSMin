@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const fs = require('fs')
 
 exports.sub_data_check = () =>{
+    // count
     models.sub_td1.findAndCountAll({
     }).then(result1 =>{
         console.log(`result1 : ${result1.count}`)
@@ -28,6 +29,30 @@ exports.sub_data_check = () =>{
                     where : {td_idx : 3}
                 })
             })
+        })
+    })
+    ///byte
+    models.sub_td1.sum('byte').then(sum1 =>{
+        models.sub_count.update({
+            byte : sum1
+        },{
+            where : {td_idx : 1}
+        })
+    })
+
+    models.sub_td2.sum('byte').then(sum2 =>{
+        models.sub_count.update({
+            byte : sum2
+        },{
+            where : {td_idx : 2}
+        })
+    })
+
+    models.sub_td3.sum('byte').then(sum3 =>{
+        models.sub_count.update({
+            byte : sum3
+        },{
+            where : {td_idx : 3}
         })
     })
 }
