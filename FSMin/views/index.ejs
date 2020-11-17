@@ -56,9 +56,13 @@
       });
     });
 
+
+    function refresh() {
+      history.go(0);
+    }
+
     function del_file(file_name) {
-      
-      //history.go(0);
+      refresh();
       $.ajax({
         url: 'delete',
         type: 'post',

@@ -3,7 +3,7 @@ const multer = require('multer')
 const router = express.Router();
 const fs = require('fs')
 const models = require('../models/index.js');
-const img_file_path = './public/userimage/'
+const img_file_path = '../public/userimage/'
 const bodyParser = require('body-parser');
 const func = require('./func');
 var cors = require('cors');
@@ -207,7 +207,6 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
     models.sub_count.findAll({
       attributes : ['byte']
     }).then((byte_num)=>{
-
       if((byte_num && byte_num.length) < 1 || byte_num[0] == null){
         sub_route_value = [0, 0, 0]
       }else{
