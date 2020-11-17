@@ -57,7 +57,7 @@ exports.sub_data_check = () =>{
     })
 }
 
-exports.main_table_delete = (req) =>{
+exports.main_table_delete = (req, cb) =>{
     console.log(req.body.img_name)
     models.Main_td.destroy({
         where: {
@@ -66,5 +66,6 @@ exports.main_table_delete = (req) =>{
       }).then(result => {
         this.sub_data_check();
         console.log('데이터 순차 삭제 완료')
+        cb()
     })
 }
