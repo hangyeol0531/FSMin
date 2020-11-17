@@ -12,6 +12,7 @@ const storage = require('../../MPI/owfsStroageEngine');
 
 const file = require('../../MPI/file');
 const hosts = require('../../config.json').hosts;
+const net = require('net');
 // CORS 설정
 router.use(cors());
 
@@ -156,9 +157,42 @@ router.post('/delete', (req, res) => {
 })
 
 router.get('/download', (req, res) =>{
-  const path = `${img_file_path}${req.query.img_name}`
-  console.log(path)
-  res.status(200).download(path);
+  const filename = req.query.file;
+  models.Main_td.findAll({
+    where:{
+      src: filename
+    }
+  }).then((result)=>{
+    //let host = hosts[parseInt(result[0].dataValues.tb_num1)];
+    let host = {"ip":"localhost", "port":5000};
+    let flg = false;
+    const conn = net.createConnection(host.port, host.ip, ()=>{
+      conn.write(`[GET]${filename}`);
+    });
+    conn.on('data', (data)=>{
+      if(!flg && data.toString() == 'OK'){
+        flg = true;
+        res.writeHead(200, {
+          "Content-Disposition": `attachment;filename=${filename.substring(13,filename.length)}`,
+          'Content-Type': 'image/png',
+        });
+      }
+      else{
+        res.write(data);
+      }
+    })
+    conn.on('error', (err)=>{
+      console.log('[Error] download server is down');
+      res.status(500);
+    });
+    conn.on('end',()=>{
+      res.status(200).end();
+    })
+  })
+
+  // const path = `${img_file_path}${req.query.img_name}`
+  // console.log(path)
+  // res.status(200).download(path);
 })
 
 router.post('/save_Image', upload.single('userfile'), (req, res) => {
