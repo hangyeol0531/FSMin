@@ -18,6 +18,6 @@ DataBase : MySQL(Sequelize)<br>
 ### sub_td1
 <img width = "500" height = "110" src = "https://user-images.githubusercontent.com/41174265/99378269-96b83b00-290a-11eb-92dd-49f7048b03b3.png"><br>
 ### sub_td2
-<img width = "500" height = "130" src = "https://user-images.githubusercontent.com/41174265/99378292-9c158580-290a-11eb-9193-e1830a41c4b2.png"><br>
+<img width = "440" height = "130" src = "https://user-images.githubusercontent.com/41174265/99378292-9c158580-290a-11eb-9193-e1830a41c4b2.png"><br>
 ### sub_td3
 <img width = "500" height = "130" src = "https://user-images.githubusercontent.com/41174265/99378308-a0da3980-290a-11eb-9e02-4ba9d3216ff7.png">
