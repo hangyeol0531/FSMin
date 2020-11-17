@@ -3,13 +3,15 @@ const multer = require('multer')
 const router = express.Router();
 const fs = require('fs')
 const models = require('../models/index.js');
-const img_file_path = '../public/userimage/'
+const img_file_path = './public/userimage/'
 const bodyParser = require('body-parser');
 const func = require('./func');
 var cors = require('cors');
 
 const storage = require('../../MPI/owfsStroageEngine');
 
+const file = require('../../MPI/file');
+const hosts = require('../../config.json').hosts;
 // CORS 설정
 router.use(cors());
 
@@ -35,87 +37,122 @@ const upload = multer({
 
 router.get('/', function (req, res, next) {
   console.log('/ 접속')
-  fs.readdir(img_file_path, (err, file_list) => {
+  models.Main_td.findAll(
+
+  ).then((result)=>{
+    let namelist = [];
+    for(data of result){
+      namelist.push(data.dataValues.src);
+    }
+    //console.log(namelist.length);
     res.render('index', {
       title: 'FSM in',
-      file_num: file_list.length,
-      file_arr: file_list
+      file_num: namelist.length,
+      file_arr: namelist
     });
-  })
+
+    //console.log(result.length);
+  });
+  // fs.readdir(img_file_path, (err, file_list) => {
+  //   if(err) throw err;
+    
+  // })
 });
 
 
 router.post('/delete', (req, res) => {
-  let path = `${img_file_path}/${req.body.img_name}`
-  fs.unlink(path, function (err) {
-    if (err && err.code == 'ENOENT') {
-      // file doens't exist
-      console.info("File doesn't exist, won't remove it.");
-    } else if (err) {
-      // other errors, e.g. maybe we don't have enough permission
-      console.error("Error occurred while trying to remove file");
-    } else {
-      console.log("filename :  " + req.body.img_name)
-      models.Main_td.findAll({
-        where: {
-          src : req.body.img_name
-        }
-      }).then(result =>{
-        let tb1 = Number(result[0].dataValues.tb_num1)
-        let tb2 = Number(result[0].dataValues.tb_num2)
-        console.log(`tb1 : ${tb1} tb2 : ${tb2}`)
-        if(tb1 + tb2 == 3){
-          console.log('1접속')
-          models.sub_td1.destroy({
-            where: {
-              src : req.body.img_name
-            }
-          }).then(result => {
+  console.log(req.body.img_name);
+  let desthost = [];
+  models.Main_td.findAll({
+    where:{
+      src: req.body.img_name
+    }
+  }).then(result=>{
+    
+    //desthost.push(parseInt(result[0].dataValues.tb_num1));
+    //desthost.push(parseInt(result[0].dataValues.tb_num2));
+    desthost[0] = hosts[0];
+    console.log(desthost);
+    
+    file.delFile(desthost, req.body.img_name, (err) =>{
+      if (err) {
+        // other errors, e.g. maybe we don't have enough permission
+        console.error("Error occurred while trying to remove file");
+        res.status(400).send("<script>alert('파일이 정상적으로 삭제되었습니다.'); window.location = '/' </script>")
+      } else {
+        console.log("filename :  " + req.body.img_name)
+        models.Main_td.findAll({
+          where: {
+            src : req.body.img_name
+          }
+        }).then(result =>{
+          let tb1 = Number(result[0].dataValues.tb_num1)
+          let tb2 = Number(result[0].dataValues.tb_num2)
+          console.log(`tb1 : ${tb1} tb2 : ${tb2}`)
+          if(tb1 + tb2 == 3){
+            console.log('1접속')
+            models.sub_td1.destroy({
+              where: {
+                src : req.body.img_name
+              }
+            }).then(result => {
+              models.sub_td2.destroy({
+                where: {
+                  src : req.body.img_name
+                }
+              }).then(result => {
+                func.main_table_delete(req, ()=>{
+
+                })
+              })
+            })
+          }else if(tb1+tb2 == 4){
+            console.log('3접속')
+            models.sub_td1.destroy({
+              where: {
+                src : req.body.img_name
+              }
+            }).then(result => {
+              models.sub_td3.destroy({
+                where: {
+                  src : req.body.img_name
+                }
+              }).then(result => {
+                func.main_table_delete(req, ()=>{
+                  
+                })
+                
+              })
+            })
+          }else if(tb1 + tb2 == 5){
+            console.log('5접속')
+            console.log(req.body.img_name)
             models.sub_td2.destroy({
               where: {
                 src : req.body.img_name
               }
             }).then(result => {
-              func.main_table_delete(req)
+              console.log('---------------')
+              models.sub_td3.destroy({
+                where: {
+                  src : req.body.img_name
+                }
+              }).then(result => {
+                func.main_table_delete(req, ()=>{
+                
+                })
+              })
             })
-          })
-        }else if(tb1+tb2 == 4){
-          console.log('3접속')
-          models.sub_td1.destroy({
-            where: {
-              src : req.body.img_name
-            }
-          }).then(result => {
-            models.sub_td3.destroy({
-              where: {
-                src : req.body.img_name
-              }
-            }).then(result => {
-              func.main_table_delete(req)
-            })
-          })
-        }else if(tb1 + tb2 == 5){
-          console.log('5접속')
-          console.log(req.body.img_name)
-          models.sub_td2.destroy({
-            where: {
-              src : req.body.img_name
-            }
-          }).then(result => {
-            console.log('---------------')
-            models.sub_td3.destroy({
-              where: {
-                src : req.body.img_name
-              }
-            }).then(result => {
-              func.main_table_delete(req)
-            })
-          })
-        }
-      })
-      res.status(200).send("<script>alert('파일이 정상적으로 삭제되었습니다.'); window.location = '/' </script>")
-    }
+          }
+          
+        })
+        //console.log('asdfadsfasdfasdfasfaefadfasfed');
+        res.status(200).send("<script>alert('파일이 정상적으로 삭제되었습니다.'); window.location = '/' </script>")
+      
+      }
+    });
   });
+
 })
 
 router.get('/download', (req, res) =>{
@@ -136,10 +173,16 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
     models.sub_count.findAll({
       attributes : ['byte']
     }).then((byte_num)=>{
-      console.log(byte_num);
-      sub_route_value.push(byte_num[0].byte)
-      sub_route_value.push(byte_num[1].byte)
-      sub_route_value.push(byte_num[2].byte)
+
+      if((byte_num && byte_num.length) < 1 || byte_num[0] == null){
+        sub_route_value = [0, 0, 0]
+      }else{
+        console.log(byte_num)
+        console.log(`0 : ${byte_num[0].byte} | 1 : ${byte_num[1].byte} | 2 : ${byte_num[2].byte}`)
+        sub_route_value.push(byte_num[0].byte)
+        sub_route_value.push(byte_num[1].byte)
+        sub_route_value.push(byte_num[2].byte)
+      }
     //sub_route_value : 여기에다가 바이트 배열을 만들어야함
       let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
       if(high == 0){

@@ -55,12 +55,9 @@
       });
     });
 
-    function refresh() {
-      history.go(0);
-    }
-
     function del_file(file_name) {
-      refresh();
+      
+      //history.go(0);
       $.ajax({
         url: 'delete',
         type: 'post',
