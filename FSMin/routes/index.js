@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const func = require('./func');
 var cors = require('cors');
 
+const storage = require('../../MPI/owfsStroageEngine');
+
 // CORS 설정
 router.use(cors());
 
@@ -20,9 +22,9 @@ models.sequelize.sync().then(() => {
 
 /* GET home page. */
 const upload = multer({
-  storage: multer.diskStorage({
+  storage: storage({
     destination: function (req, file, cb) {
-      cb(null, img_file_path);
+      cb(null, [{"ip":"localhost", "port":5000}]);
     },
     filename: function (req, file, cb) {
       let file_name = new Date().valueOf()+file.originalname
@@ -126,7 +128,7 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
   console.log('save Image 접속')
   console.log('파일 전송 완료')
   let file_name = req.file.filename
-  console.log(file_name)
+  console.log(`filename : ${file_name}`)
   let sub_route_value = []
   let sub_route_min = []
   models.sub_count.findAll({
@@ -134,6 +136,7 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
     models.sub_count.findAll({
       attributes : ['byte']
     }).then((byte_num)=>{
+      console.log(byte_num);
       sub_route_value.push(byte_num[0].byte)
       sub_route_value.push(byte_num[1].byte)
       sub_route_value.push(byte_num[2].byte)
