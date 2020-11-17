@@ -1,4 +1,4 @@
-# FSMin
+# FSM(File System Management)in
 FSM in은 사진을 간편하게 저장할 수 있는 클라우드 시스템입니다.<br>
 byte에 따라 저장되는 공간을 3개의 라즈베리파이로 분산시켜 저장합니다.<br>
 ## Skill 
