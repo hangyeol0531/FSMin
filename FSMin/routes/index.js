@@ -13,6 +13,8 @@ const storage = require('../../MPI/owfsStroageEngine');
 const file = require('../../MPI/file');
 const hosts = require('../../config.json').hosts;
 const net = require('net');
+
+let serverWorks = [0,0,0];
 // CORS 설정
 router.use(cors());
 
@@ -27,7 +29,35 @@ models.sequelize.sync().then(() => {
 const upload = multer({
   storage: storage({
     destination: function (req, file, cb) {
-      cb(null, [{"ip":"localhost", "port":5000}]);
+      let sub_route_value = []
+      let sub_route_min = []
+      models.sub_count.findAll({
+      }).then(result =>{///
+        models.sub_count.findAll({
+          attributes : ['byte']
+        }).then((byte_num)=>{
+          if((byte_num && byte_num.length) < 1 || byte_num[0] == null){
+            sub_route_value = [0, 0, 0]
+          }else{
+            for(let i=0; i<3; i++) sub_route_value.push=(byte_num[i].byte)
+          }
+        //sub_route_value : 여기에다가 바이트 배열을 만들어야함
+          let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
+          if(high == 0){
+            sub_route_min = [1, 2]
+          }else if(high == 1){
+            sub_route_min = [0, 2]
+          }else if(high == 2){
+            sub_route_min = [0, 1]
+          }
+          console.log(sub_route_min)
+          cb(null, [hosts[sub_route_min[0]],hosts[sub_route_min[1]]]);
+
+          serverWorks[sub_route_min[0]]++;
+          serverWorks[sub_route_min[1]]++;
+          
+        })
+      })
     },
     filename: function (req, file, cb) {
       let file_name = new Date().valueOf()+file.originalname
@@ -69,13 +99,17 @@ router.post('/delete', (req, res) => {
       src: req.body.img_name
     }
   }).then(result=>{
-    
-    //desthost.push(parseInt(result[0].dataValues.tb_num1));
-    //desthost.push(parseInt(result[0].dataValues.tb_num2));
-    desthost[0] = hosts[0];
+    serverWorks[parseInt(result[0].dataValues.tb_num1)]++;
+    serverWorks[parseInt(result[0].dataValues.tb_num2)]++;
+
+    desthost.push(parseInt(result[0].dataValues.tb_num1));
+    desthost.push(parseInt(result[0].dataValues.tb_num2));
+    //desthost[0] = hosts[0];
     console.log(desthost);
     
     file.delFile(desthost, req.body.img_name, (err) =>{
+      serverWorks[parseInt(result[0].dataValues.tb_num1)]--;
+      serverWorks[parseInt(result[0].dataValues.tb_num2)]--;
       if (err) {
         // other errors, e.g. maybe we don't have enough permission
         console.error("Error occurred while trying to remove file");
@@ -163,8 +197,15 @@ router.get('/download', (req, res) =>{
       src: filename
     }
   }).then((result)=>{
-    //let host = hosts[parseInt(result[0].dataValues.tb_num1)];
-    let host = {"ip":"localhost", "port":5000};
+    const havetables = [parseInt(result[0].dataValues.tb_num1),parseInt(result[0].dataValues.tb_num2)];
+    let host;
+    if(serverWorks[havetables[0]-1] < serverWorks[havetables[1]-1]){
+      host = hosts[havetables[0]-1];
+    }else{
+      host = hosts[havetables[1]-1];
+    }
+    console(`Downloading from ${host.ip}...`);
+    //let host = {"ip":"localhost", "port":5000};
     let flg = false;
     const conn = net.createConnection(host.port, host.ip, ()=>{
       conn.write(`[GET]${filename}`);
@@ -196,6 +237,9 @@ router.get('/download', (req, res) =>{
 })
 
 router.post('/save_Image', upload.single('userfile'), (req, res) => {
+  serverWorks[sub_route_min[0]]--;
+  serverWorks[sub_route_min[1]]--;
+
   console.log('save Image 접속')
   console.log('파일 전송 완료')
   let file_name = req.file.filename
