@@ -3,7 +3,7 @@ const multer = require('multer')
 const router = express.Router();
 const fs = require('fs')
 const models = require('../models/index.js');
-const img_file_path = '../public/userimage/'
+const img_file_path = './public/userimage/'
 const bodyParser = require('body-parser');
 const func = require('./func');
 var cors = require('cors');
@@ -251,6 +251,7 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
     models.sub_count.findAll({
       attributes : ['byte']
     }).then((byte_num)=>{
+      console.log(byte_num)
       if((byte_num && byte_num.length) < 1 || byte_num[0] == null){
         sub_route_value = [0, 0, 0]
       }else{
@@ -261,6 +262,7 @@ router.post('/save_Image', upload.single('userfile'), (req, res) => {
         sub_route_value.push(byte_num[2].byte)
       }
     //sub_route_value : 여기에다가 바이트 배열을 만들어야함
+      console.log(sub_route_value)
       let high = sub_route_value.findIndex((e)=> e === Math.max.apply(null, sub_route_value))
       if(high == 0){
         sub_route_min = [1, 2]
